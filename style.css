@@ -6,7 +6,9 @@
   --surface: #f4f8fc;
   --white: #ffffff;
   --shadow: rgba(12, 34, 59, 0.18);
+  --shadow-soft: rgba(0, 40, 90, 0.12);
   --max-width: 1440px;
+  --border-soft: rgba(0, 104, 181, 0.14);
 }
 
 * {
@@ -41,6 +43,34 @@ select {
   font: inherit;
 }
 
+button,
+[role="button"],
+a {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+:focus-visible {
+  outline: 3px solid rgba(0, 104, 181, 0.85);
+  outline-offset: 3px;
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+}
+
+.skip-link:focus {
+  left: 1rem;
+  top: 1rem;
+  z-index: 999;
+  padding: 0.75rem 1rem;
+  background: var(--white);
+  color: var(--intel-dark);
+  border-radius: 0.5rem;
+  box-shadow: 0 12px 28px rgba(0, 40, 90, 0.16);
+}
+
 .hero {
   position: relative;
   min-height: 92vh;
@@ -71,6 +101,26 @@ select {
   margin: auto;
   color: var(--white);
   padding-top: clamp(2rem, 4vw, 4rem);
+}
+
+.language-control {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 1.25rem;
+}
+
+.lang-select {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: var(--white);
+  min-width: 150px;
+  border-radius: 999px;
+}
+
+.lang-select option {
+  color: var(--text-dark);
 }
 
 .brand-logo {
@@ -364,6 +414,166 @@ main {
   color: var(--text-dark);
 }
 
+.technology-purpose {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.purpose-intro {
+  max-width: 820px;
+  margin: 0 auto 2rem;
+  font-size: clamp(1rem, 1.3vw, 1.2rem);
+  color: #2d3e5a;
+}
+
+.purpose-card {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--border-soft);
+  border-radius: 1.25rem;
+  box-shadow: 0 16px 32px var(--shadow-soft);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.purpose-card:hover,
+.purpose-card:focus-within {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 36px rgba(22, 62, 104, 0.12);
+}
+
+.card-icon {
+  width: 3rem;
+  height: 3rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.9rem;
+  background: rgba(0, 104, 181, 0.08);
+  color: var(--intel-blue);
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+}
+
+.purpose-card h3 {
+  margin: 0 0 0.75rem;
+  font-size: clamp(1.5rem, 2.4vw, 1.9rem);
+  line-height: 1.2;
+  color: var(--intel-dark);
+}
+
+.purpose-card p {
+  color: #2d3e5a;
+  margin-bottom: 1.25rem;
+}
+
+.purpose-btn {
+  margin-top: auto;
+  align-self: flex-start;
+  border-radius: 999px;
+  padding: 0.7rem 1.3rem;
+  font-weight: 700;
+  background: var(--intel-blue);
+  border-color: var(--intel-blue);
+}
+
+.purpose-btn:hover,
+.purpose-btn:focus-visible {
+  background: #0b5da5;
+  border-color: #0b5da5;
+  box-shadow: 0 10px 18px rgba(0, 104, 181, 0.2);
+}
+
+.purpose-accordion {
+  margin-top: 2rem;
+  border-radius: 1rem;
+  overflow: hidden;
+  border: 1px solid var(--border-soft);
+  box-shadow: 0 14px 28px rgba(0, 40, 90, 0.08);
+}
+
+.accordion-button {
+  font-weight: 700;
+  color: var(--intel-dark);
+  background: rgba(234, 245, 255, 0.8);
+}
+
+.accordion-button:not(.collapsed) {
+  color: var(--intel-dark);
+  background: rgba(221, 238, 255, 0.96);
+  box-shadow: inset 0 -1px 0 rgba(0, 104, 181, 0.1);
+}
+
+.accordion-button::after {
+  margin-inline-start: 0.5rem;
+}
+
+.accordion-body {
+  background: rgba(255, 255, 255, 0.92);
+  color: #2d3e5a;
+}
+
+.subscription-section {
+  padding: 2rem 0 4rem;
+}
+
+.subscription-box {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(234, 245, 255, 0.96));
+  border: 1px solid var(--border-soft);
+  border-radius: 1.5rem;
+  box-shadow: 0 20px 36px rgba(0, 40, 90, 0.08);
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+.subscription-copy {
+  margin: 0;
+  max-width: 40ch;
+  color: #2d3e5a;
+}
+
+.subscription-form {
+  padding: 0.25rem 0;
+}
+
+.subscription-form .form-label {
+  font-weight: 700;
+  color: var(--intel-dark);
+}
+
+.subscription-form .form-control {
+  border-radius: 0.85rem;
+  border: 1px solid rgba(0, 104, 181, 0.18);
+  min-height: 3rem;
+}
+
+.subscription-form .form-control:focus {
+  border-color: rgba(0, 104, 181, 0.65);
+  box-shadow: 0 0 0 0.25rem rgba(0, 104, 181, 0.12);
+}
+
+.subscription-btn {
+  border-radius: 999px;
+  padding: 0.8rem 1.6rem;
+  min-width: 150px;
+  font-weight: 700;
+  background: var(--intel-blue);
+  border-color: var(--intel-blue);
+}
+
+.subscription-btn:hover,
+.subscription-btn:focus-visible {
+  background: #0b5da5;
+  border-color: #0b5da5;
+}
+
+.subscription-status {
+  min-height: 1.5rem;
+  margin: 0;
+  color: var(--intel-dark);
+  font-weight: 700;
+}
+
 .closing-section {
   padding-bottom: 3rem;
 }
@@ -413,15 +623,28 @@ main {
 
 .site-footer {
   background: var(--intel-dark);
-  color: rgba(255, 255, 255, 0.9);
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  flex-wrap: wrap;
-  width: min(var(--max-width), calc(100% - 2rem));
-  margin: 0 auto;
-  padding: 1.25rem 0 2rem;
-  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.92);
+  padding: 1.75rem 0 2rem;
+}
+
+.site-footer .container {
+  max-width: var(--max-width);
+}
+
+.footer-title,
+.footer-copy,
+.footer-disclaimer {
+  margin: 0;
+}
+
+.footer-title {
+  font-size: clamp(1.1rem, 1.8vw, 1.4rem);
+  font-weight: 800;
+}
+
+.footer-copy,
+.footer-disclaimer {
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .js-ready .milestone-slide {
@@ -479,9 +702,11 @@ main {
     flex: 1 1 120px;
   }
 
+  .subscription-box {
+    padding: 1.25rem;
+  }
+
   .site-footer {
-    flex-direction: column;
-    align-items: center;
     text-align: center;
   }
 }
@@ -493,7 +718,9 @@ main {
 
   .milestone-slide,
   .timeline-card,
-  .control-button {
+  .control-button,
+  button,
+  a {
     transition: none;
   }
 }

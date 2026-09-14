@@ -4,16 +4,53 @@ const nextButton = document.getElementById('next-slide');
 const pauseButton = document.getElementById('pause-slide');
 const currentSlideLabel = document.getElementById('current-slide');
 const totalSlidesLabel = document.getElementById('total-slides');
+const languageSelector = document.getElementById('language-selector');
+const rtlStylesheet = document.getElementById('bootstrap-rtl');
+const currentYearElement = document.getElementById('current-year');
+const subscriptionForm = document.getElementById('subscription-form');
+const subscriptionStatus = document.getElementById('subscription-status');
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 let currentIndex = 0;
 let autoplayEnabled = !reduceMotion;
 let cycleTimer = null;
 let fadeOutTimer = null;
+let currentLanguage = 'en';
+
+// Language control and RTL switching.
+function updateBootstrapStylesheet(lang) {
+  if (!rtlStylesheet) {
+    return;
+  }
+
+  rtlStylesheet.disabled = lang !== 'ar';
+}
+
+function applyLanguage(language) {
+  currentLanguage = language === 'ar' ? 'ar' : 'en';
+  document.documentElement.lang = currentLanguage;
+  document.documentElement.dir = currentLanguage === 'ar' ? 'rtl' : 'ltr';
+
+  if (languageSelector) {
+    languageSelector.value = currentLanguage;
+  }
+
+  updateBootstrapStylesheet(currentLanguage);
+}
+
+function initializeLanguage() {
+  const savedLanguage = localStorage.getItem('intel-site-language');
+  const browserLanguage = navigator.language || navigator.userLanguage || 'en';
+  const preferredLanguage = savedLanguage || (browserLanguage.toLowerCase().startsWith('ar') ? 'ar' : 'en');
+
+  applyLanguage(preferredLanguage);
+}
 
 function updateIndicator() {
-  currentSlideLabel.textContent = String(currentIndex + 1);
-  totalSlidesLabel.textContent = String(slides.length);
+  if (currentSlideLabel && totalSlidesLabel) {
+    currentSlideLabel.textContent = String(currentIndex + 1);
+    totalSlidesLabel.textContent = String(slides.length);
+  }
 }
 
 function clearTimers() {
@@ -44,12 +81,19 @@ function showSlide(nextIndex) {
 function pauseAutoplay() {
   clearTimers();
   autoplayEnabled = false;
-  pauseButton.textContent = 'Play';
+
+  if (pauseButton) {
+    pauseButton.textContent = 'Play';
+  }
 }
 
 function resumeAutoplay() {
   autoplayEnabled = true;
-  pauseButton.textContent = 'Pause';
+
+  if (pauseButton) {
+    pauseButton.textContent = 'Pause';
+  }
+
   startAutoplay();
 }
 
@@ -95,8 +139,12 @@ function initializeSlideshow() {
       slide.classList.toggle('is-active', index === 0);
       slide.setAttribute('aria-hidden', String(index !== 0));
     });
-    pauseButton.textContent = 'Pause unavailable';
-    pauseButton.disabled = true;
+
+    if (pauseButton) {
+      pauseButton.textContent = 'Pause unavailable';
+      pauseButton.disabled = true;
+    }
+
     updateIndicator();
     return;
   }
@@ -104,23 +152,71 @@ function initializeSlideshow() {
   startAutoplay();
 }
 
-prevButton.addEventListener('click', () => {
-  pauseAutoplay();
-  showSlide(currentIndex - 1);
-});
-
-nextButton.addEventListener('click', () => {
-  pauseAutoplay();
-  showSlide(currentIndex + 1);
-});
-
-pauseButton.addEventListener('click', () => {
-  if (autoplayEnabled) {
-    pauseAutoplay();
-  } else {
-    resumeAutoplay();
+function setupSubscriptionForm() {
+  if (!subscriptionForm || !subscriptionStatus) {
+    return;
   }
-});
+
+  subscriptionForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    const emailInput = document.getElementById('email');
+
+    if (!emailInput || !emailInput.value.trim()) {
+      subscriptionStatus.textContent = currentLanguage === 'ar'
+        ? 'يرجى إدخال بريد إلكتروني صالح.'
+        : 'Please enter a valid email address.';
+      emailInput?.focus();
+      return;
+    }
+
+    subscriptionStatus.textContent = currentLanguage === 'ar'
+      ? 'شكرًا للاشتراك.'
+      : 'Thanks for subscribing.';
+
+    subscriptionForm.reset();
+  });
+}
+
+if (currentYearElement) {
+  currentYearElement.textContent = new Date().getFullYear();
+}
+
+initializeLanguage();
+initializeSlideshow();
+setupSubscriptionForm();
+
+if (languageSelector) {
+  languageSelector.addEventListener('change', (event) => {
+    const selectedLanguage = event.target.value;
+    localStorage.setItem('intel-site-language', selectedLanguage);
+    applyLanguage(selectedLanguage);
+  });
+}
+
+if (prevButton) {
+  prevButton.addEventListener('click', () => {
+    pauseAutoplay();
+    showSlide(currentIndex - 1);
+  });
+}
+
+if (nextButton) {
+  nextButton.addEventListener('click', () => {
+    pauseAutoplay();
+    showSlide(currentIndex + 1);
+  });
+}
+
+if (pauseButton) {
+  pauseButton.addEventListener('click', () => {
+    if (autoplayEnabled) {
+      pauseAutoplay();
+    } else {
+      resumeAutoplay();
+    }
+  });
+}
 
 document.addEventListener('keydown', (event) => {
   if (event.key === 'ArrowRight') {
@@ -133,5 +229,3 @@ document.addEventListener('keydown', (event) => {
     showSlide(currentIndex - 1);
   }
 });
-
-initializeSlideshow();
