@@ -647,6 +647,24 @@ main {
   color: rgba(255, 255, 255, 0.8);
 }
 
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.footer-links a {
+  color: rgba(255, 255, 255, 0.86);
+  text-decoration: underline;
+  text-underline-offset: 0.2rem;
+}
+
+.footer-links a:hover,
+.footer-links a:focus-visible {
+  color: var(--white);
+}
+
 .js-ready .milestone-slide {
   display: none;
   opacity: 0;

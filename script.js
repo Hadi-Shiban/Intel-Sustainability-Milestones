@@ -10,6 +10,7 @@ const currentYearElement = document.getElementById('current-year');
 const subscriptionForm = document.getElementById('subscription-form');
 const subscriptionStatus = document.getElementById('subscription-status');
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const rtlLanguageCodes = new Set(['ar', 'he', 'fa', 'ur']);
 
 let currentIndex = 0;
 let autoplayEnabled = !reduceMotion;
@@ -18,32 +19,47 @@ let fadeOutTimer = null;
 let currentLanguage = 'en';
 
 // Language control and RTL switching.
-function updateBootstrapStylesheet(lang) {
+function updateBootstrapStylesheet(isRtl) {
   if (!rtlStylesheet) {
     return;
   }
 
-  rtlStylesheet.disabled = lang !== 'ar';
+  rtlStylesheet.disabled = !isRtl;
 }
 
 function applyLanguage(language) {
-  currentLanguage = language === 'ar' ? 'ar' : 'en';
+  const normalizedLanguage = (language || 'en').split('-')[0].toLowerCase();
+  const isRtlLanguage = rtlLanguageCodes.has(normalizedLanguage);
+  currentLanguage = isRtlLanguage ? 'ar' : 'en';
+
   document.documentElement.lang = currentLanguage;
-  document.documentElement.dir = currentLanguage === 'ar' ? 'rtl' : 'ltr';
+  document.documentElement.dir = isRtlLanguage ? 'rtl' : 'ltr';
 
   if (languageSelector) {
     languageSelector.value = currentLanguage;
   }
 
-  updateBootstrapStylesheet(currentLanguage);
+  updateBootstrapStylesheet(isRtlLanguage);
 }
 
 function initializeLanguage() {
   const savedLanguage = localStorage.getItem('intel-site-language');
   const browserLanguage = navigator.language || navigator.userLanguage || 'en';
-  const preferredLanguage = savedLanguage || (browserLanguage.toLowerCase().startsWith('ar') ? 'ar' : 'en');
+  const preferredLanguage = savedLanguage || browserLanguage;
 
   applyLanguage(preferredLanguage);
+
+  if (document.documentElement) {
+    const observer = new MutationObserver(() => {
+      const observedLanguage = document.documentElement.lang || 'en';
+      applyLanguage(observedLanguage);
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['lang'],
+    });
+  }
 }
 
 function updateIndicator() {
@@ -160,7 +176,7 @@ function setupSubscriptionForm() {
   subscriptionForm.addEventListener('submit', (event) => {
     event.preventDefault();
 
-    const emailInput = document.getElementById('email');
+    const emailInput = document.getElementById('newsletter-email');
 
     if (!emailInput || !emailInput.value.trim()) {
       subscriptionStatus.textContent = currentLanguage === 'ar'
